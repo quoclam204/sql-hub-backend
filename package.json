@@ -1,0 +1,212 @@
+{
+  "name": "sql-hub-backend",
+  "version": "1.0.0",
+  "description": "SQLHub Backend REST API with NestJS & TypeORM",
+  "author": "SQLHub Team",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "typeorm": "env-cmd -- ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migration:generate": "npm run typeorm -- --dataSource=src/database/data-source.ts migration:generate",
+    "postmigration:generate": "npm run lint -- --fix",
+    "migration:create": "npm run typeorm -- migration:create",
+    "migration:run": "npm run typeorm -- --dataSource=src/database/data-source.ts migration:run",
+    "migration:revert": "npm run typeorm -- --dataSource=src/database/data-source.ts migration:revert",
+    "schema:drop": "npm run typeorm -- --dataSource=src/database/data-source.ts schema:drop",
+    "seed:create": "hygen seeds create-relational",
+    "seed:create:relational": "hygen seeds create-relational",
+    "postseed:create:relational": "npm run lint -- --fix",
+    "generate:resource": "hygen generate relational-resource",
+    "generate:resource:relational": "hygen generate relational-resource",
+    "postgenerate:resource:relational": "npm run lint -- --fix",
+    "add:property": "hygen property add-to-relational",
+    "add:property:to-relational": "hygen property add-to-relational",
+    "postadd:property:to-relational": "npm run lint -- --fix",
+    "seed:run": "ts-node -r tsconfig-paths/register ./src/database/seeds/relational/run-seed.ts",
+    "seed:run:relational": "ts-node -r tsconfig-paths/register ./src/database/seeds/relational/run-seed.ts",
+    "prebuild": "rimraf dist",
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:swc": "nest start -b swc -w",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "env-cmd -- jest --config ./test/jest-e2e.json",
+    "test:generators:relational": "bash test/generators/run-static.sh relational",
+    "test:e2e:generators:relational:docker": "bash test/generators/run-crud-relational.sh",
+    "test:e2e:relational:docker": "docker compose -f docker-compose.relational.test.yaml --env-file .env.example -p tests up -d --build && docker compose -f docker-compose.relational.test.yaml -p tests exec api /opt/wait-for-it.sh -t 0 localhost:3001 -- npm run test:e2e -- --watchAll --runInBand && docker compose -f docker-compose.relational.test.yaml -p tests down && docker compose -p tests rm -svf",
+    "prepare": "is-ci || husky",
+    "release": "release-it"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "3.1011.0",
+    "@aws-sdk/s3-request-presigner": "3.1011.0",
+    "@nestjs/common": "11.1.18",
+    "@nestjs/config": "4.0.3",
+    "@nestjs/core": "11.1.18",
+    "@nestjs/jwt": "11.0.2",
+    "@nestjs/mongoose": "11.0.4",
+    "@nestjs/passport": "11.0.5",
+    "@nestjs/platform-express": "11.1.18",
+    "@nestjs/swagger": "11.2.6",
+    "@nestjs/typeorm": "11.0.1",
+    "@types/multer-s3": "3.0.3",
+    "@types/prompts": "2.4.9",
+    "apple-signin-auth": "2.0.0",
+    "bcryptjs": "3.0.3",
+    "class-transformer": "0.5.1",
+    "class-validator": "0.15.1",
+    "dotenv": "17.3.1",
+    "google-auth-library": "10.6.2",
+    "handlebars": "4.7.9",
+    "helmet": "^8.3.0",
+    "mongoose": "9.4.1",
+    "mongoose-autopopulate": "^1.2.1",
+    "ms": "2.1.3",
+    "multer": "2.1.1",
+    "multer-s3": "3.0.1",
+    "nestjs-i18n": "10.6.0",
+    "nodemailer": "8.0.2",
+    "passport": "0.7.0",
+    "passport-anonymous": "1.0.1",
+    "passport-jwt": "4.0.1",
+    "pg": "8.20.0",
+    "reflect-metadata": "0.2.2",
+    "rimraf": "6.1.3",
+    "rxjs": "7.8.2",
+    "source-map-support": "0.5.21",
+    "swagger-ui-express": "5.0.1",
+    "typeorm": "0.3.28"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "20.5.0",
+    "@commitlint/config-conventional": "20.5.0",
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^10.0.1",
+    "@nestjs/cli": "11.0.18",
+    "@nestjs/schematics": "11.0.10",
+    "@nestjs/testing": "11.1.18",
+    "@release-it/conventional-changelog": "10.0.6",
+    "@swc/cli": "0.7.10",
+    "@swc/core": "1.15.18",
+    "@types/bcryptjs": "3.0.0",
+    "@types/express": "5.0.6",
+    "@types/jest": "30.0.0",
+    "@types/ms": "2.1.0",
+    "@types/multer": "2.1.0",
+    "@types/node": "25.5.0",
+    "@types/nodemailer": "^8.0.1",
+    "@types/passport-anonymous": "1.0.5",
+    "@types/passport-jwt": "4.0.1",
+    "@types/supertest": "7.2.0",
+    "@typescript-eslint/eslint-plugin": "8.57.1",
+    "@typescript-eslint/parser": "8.57.1",
+    "env-cmd": "11.0.0",
+    "eslint": "10.0.3",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-prettier": "5.5.5",
+    "globals": "^17.4.0",
+    "husky": "9.1.7",
+    "hygen": "6.2.11",
+    "is-ci": "4.1.0",
+    "jest": "30.3.0",
+    "prettier": "3.8.1",
+    "prompts": "2.4.2",
+    "release-it": "19.2.4",
+    "supertest": "7.2.2",
+    "ts-jest": "29.4.6",
+    "ts-loader": "9.5.7",
+    "ts-node": "10.9.2",
+    "tsconfig-paths": "4.2.0",
+    "tslib": "2.8.1",
+    "typescript": "5.9.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release v${version}"
+    },
+    "github": {
+      "release": true
+    },
+    "npm": {
+      "publish": false
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "infile": "CHANGELOG.md",
+        "preset": {
+          "name": "conventionalcommits",
+          "types": [
+            {
+              "type": "chore(deps)",
+              "section": "Dependency Upgrades"
+            },
+            {
+              "type": "fix(deps)",
+              "section": "Dependency Upgrades"
+            },
+            {
+              "type": "feat",
+              "section": "Features"
+            },
+            {
+              "type": "fix",
+              "section": "Bug Fixes"
+            },
+            {
+              "type": "perf",
+              "section": "Performance Improvements"
+            },
+            {
+              "type": "revert",
+              "section": "Reverts"
+            },
+            {
+              "type": "docs",
+              "section": "Documentation"
+            },
+            {
+              "type": "refactor",
+              "section": "Code Refactoring"
+            },
+            {
+              "type": "test",
+              "section": "Tests"
+            },
+            {
+              "type": "ci",
+              "section": "Continuous Integration"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
