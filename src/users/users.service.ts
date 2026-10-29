@@ -123,6 +123,7 @@ export class UsersService {
       photo: photo,
       role: role,
       status: status,
+      locale: createUserDto.locale ?? 'vi',
       provider: createUserDto.provider ?? AuthProvidersEnum.email,
       socialId: createUserDto.socialId,
     });
@@ -277,6 +278,7 @@ export class UsersService {
       photo,
       role,
       status,
+      locale: updateUserDto.locale,
       provider: updateUserDto.provider,
       socialId: updateUserDto.socialId,
     });
