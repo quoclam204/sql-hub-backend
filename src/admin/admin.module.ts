@@ -25,6 +25,10 @@ import { DatasetEntity } from '../labs/infrastructure/persistence/relational/ent
 import { AdminLabsController } from './labs/admin-labs.controller';
 import { AdminLabsService } from './labs/admin-labs.service';
 
+// Bulk Import
+import { AdminBulkImportController } from './bulk-import/admin-bulk-import.controller';
+import { AdminBulkImportService } from './bulk-import/admin-bulk-import.service';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -46,16 +50,19 @@ import { AdminLabsService } from './labs/admin-labs.service';
     AdminLessonsController,
     AdminQuizQuestionsController,
     AdminLabsController,
+    AdminBulkImportController,
   ],
   providers: [
     AdminLessonsService,
     AdminQuizQuestionsService,
     AdminLabsService,
+    AdminBulkImportService,
   ],
   exports: [
     AdminLessonsService,
     AdminQuizQuestionsService,
     AdminLabsService,
+    AdminBulkImportService,
   ],
 })
 export class AdminModule {}
