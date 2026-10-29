@@ -29,6 +29,12 @@ import { AdminLabsService } from './labs/admin-labs.service';
 import { AdminBulkImportController } from './bulk-import/admin-bulk-import.controller';
 import { AdminBulkImportService } from './bulk-import/admin-bulk-import.service';
 
+// Statistics
+import { UserEntity } from '../users/infrastructure/persistence/relational/entities/user.entity';
+import { QuizAttemptEntity } from '../quizzes/infrastructure/persistence/relational/entities/quiz-attempt.entity';
+import { AdminStatisticsController } from './statistics/admin-statistics.controller';
+import { AdminStatisticsService } from './statistics/admin-statistics.service';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -44,6 +50,8 @@ import { AdminBulkImportService } from './bulk-import/admin-bulk-import.service'
       LabTranslationEntity,
       LabSubmissionEntity,
       DatasetEntity,
+      UserEntity,
+      QuizAttemptEntity,
     ]),
   ],
   controllers: [
@@ -51,18 +59,21 @@ import { AdminBulkImportService } from './bulk-import/admin-bulk-import.service'
     AdminQuizQuestionsController,
     AdminLabsController,
     AdminBulkImportController,
+    AdminStatisticsController,
   ],
   providers: [
     AdminLessonsService,
     AdminQuizQuestionsService,
     AdminLabsService,
     AdminBulkImportService,
+    AdminStatisticsService,
   ],
   exports: [
     AdminLessonsService,
     AdminQuizQuestionsService,
     AdminLabsService,
     AdminBulkImportService,
+    AdminStatisticsService,
   ],
 })
 export class AdminModule {}
