@@ -8,6 +8,7 @@ import { RoleSeedModule } from './role/role-seed.module';
 import { StatusSeedModule } from './status/status-seed.module';
 import { UserSeedModule } from './user/user-seed.module';
 import { CourseSeedModule } from './course/course-seed.module';
+import { LessonSeedModule } from './lesson/lesson-seed.module';
 import databaseConfig from '../../config/database.config';
 import appConfig from '../../../config/app.config';
 
@@ -17,6 +18,7 @@ import appConfig from '../../../config/app.config';
     StatusSeedModule,
     UserSeedModule,
     CourseSeedModule,
+    LessonSeedModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, appConfig],

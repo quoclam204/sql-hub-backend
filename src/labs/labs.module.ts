@@ -10,6 +10,7 @@ import { LabTranslationEntity } from './infrastructure/persistence/relational/en
     TypeOrmModule.forFeature([
       DatasetEntity,
       LabEntity,
+      LabTranslationEntity,
       LabSubmissionEntity,
       LabTranslationEntity,
     ]),

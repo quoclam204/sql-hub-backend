@@ -74,7 +74,9 @@ export class AuthGithubService {
       emailVerified = true;
     }
 
-    const nameParts = (userResponse.name || userResponse.login || '').trim().split(' ');
+    const nameParts = (userResponse.name || userResponse.login || '')
+      .trim()
+      .split(' ');
     const firstName = nameParts[0] || userResponse.login;
     const lastName = nameParts.slice(1).join(' ');
 

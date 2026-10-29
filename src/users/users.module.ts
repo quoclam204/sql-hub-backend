@@ -7,10 +7,7 @@ import { FilesModule } from '../files/files.module';
 const infrastructurePersistenceModule = RelationalUserPersistenceModule;
 
 @Module({
-  imports: [
-    infrastructurePersistenceModule,
-    FilesModule,
-  ],
+  imports: [infrastructurePersistenceModule, FilesModule],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService, infrastructurePersistenceModule],

@@ -34,6 +34,11 @@ export class LabEntity extends EntityRelationalHelper {
   @Column({ name: 'dataset_id' })
   datasetId: number;
 
+  @OneToMany(() => LabTranslationEntity, (translation) => translation.lab, {
+    cascade: true,
+  })
+  translations: LabTranslationEntity[];
+
   @Column({ type: 'text', name: 'expected_query' })
   expectedQuery: string;
 

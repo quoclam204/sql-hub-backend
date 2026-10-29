@@ -36,9 +36,13 @@ export class LessonEntity extends EntityRelationalHelper {
   @Column({ type: 'int', default: 1 })
   order: number;
 
-  @OneToMany(() => LessonTranslationEntity, (translation) => translation.lesson, {
-    cascade: true,
-  })
+  @OneToMany(
+    () => LessonTranslationEntity,
+    (translation) => translation.lesson,
+    {
+      cascade: true,
+    },
+  )
   translations: LessonTranslationEntity[];
 
   @CreateDateColumn()

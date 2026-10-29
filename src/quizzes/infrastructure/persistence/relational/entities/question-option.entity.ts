@@ -3,10 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { QuizQuestionEntity } from './quiz-question.entity';
+import { QuestionOptionTranslationEntity } from './question-option-translation.entity';
 
 @Entity({
   name: 'question_option',
@@ -15,15 +17,21 @@ export class QuestionOptionEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => QuizQuestionEntity, (q) => q.options, { onDelete: 'CASCADE' })
+  @ManyToOne(() => QuizQuestionEntity, (q) => q.options, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'question_id' })
   question: QuizQuestionEntity;
 
   @Column({ name: 'question_id' })
   questionId: number;
 
-  @Column({ type: String, name: 'option_text' })
-  optionText: string;
+  @OneToMany(
+    () => QuestionOptionTranslationEntity,
+    (translation) => translation.option,
+    { cascade: true },
+  )
+  translations: QuestionOptionTranslationEntity[];
 
   @Column({ type: String, name: 'option_text_en', nullable: true })
   optionTextEn?: string;
