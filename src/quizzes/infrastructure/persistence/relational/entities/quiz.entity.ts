@@ -11,6 +11,7 @@ import {
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { LessonEntity } from '../../../../../lessons/infrastructure/persistence/relational/entities/lesson.entity';
 import { QuizQuestionEntity } from './quiz-question.entity';
+import { QuizTranslationEntity } from './quiz-translation.entity';
 
 @Entity({
   name: 'quiz',
@@ -26,8 +27,10 @@ export class QuizEntity extends EntityRelationalHelper {
   @Column({ name: 'lesson_id', nullable: true })
   lessonId?: number | null;
 
-  @Column({ type: String })
-  title: string;
+  @OneToMany(() => QuizTranslationEntity, (translation) => translation.quiz, {
+    cascade: true,
+  })
+  translations: QuizTranslationEntity[];
 
   @OneToMany(() => QuizQuestionEntity, (question) => question.quiz, {
     cascade: true,

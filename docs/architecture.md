@@ -1,126 +1,185 @@
-# Architecture
+# SQL Hub - Architecture decisions
+
+This document records the architecture decisions for the SQL Hub project
+(SRS-SQLHub v2.2). The boilerplate-specific conventions are kept at the end.
 
 ---
 
-## Table of Contents <!-- omit in toc -->
+## 1. System overview
 
-- [Hexagonal Architecture](#hexagonal-architecture)
-- [Motivation](#motivation)
-- [Description of the module structure](#description-of-the-module-structure)
-- [Recommendations](#recommendations)
-  - [Repository](#repository)
-- [FAQ](#faq)
-  - [Is there a way to generate a new resource (controller, service, DTOs, etc) with Hexagonal Architecture?](#is-there-a-way-to-generate-a-new-resource-controller-service-dtos-etc-with-hexagonal-architecture)
-- [Links](#links)
+```text
+Browser (Next.js, vi/en)
+  |  Authorization: Bearer <access token>
+  v
+NestJS REST API (/api/v1)
+  |-- PostgreSQL (TypeORM): users, content, progress, attempts, submissions
+  |-- Sandbox: run + grade SQL against a dataset
+  |-- Swagger: /docs and /docs-json
+```
+
+- Two repositories: `sql-hub-frontend` (Next.js) and `sql-hub-backend`
+  (NestJS).
+- Backend exports OpenAPI; the frontend generates types from
+  `http://localhost:3001/docs-json`.
+- PostgreSQL is the only database. MongoDB/Mongoose was removed from the
+  repository.
+- API prefix: `/api/v1`. Swagger UI: `/docs`.
 
 ---
 
-## Hexagonal Architecture
+## 2. Authentication and token storage
 
-NestJS Boilerplate is based on [Hexagonal Architecture](https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)). This architecture is also known as Ports and Adapters.
+- Providers: Google OAuth, GitHub OAuth, and email/password (kept because the
+  boilerplate already provides it and it is useful for local testing).
+- The frontend obtains the provider access token and sends it to:
+  - `POST /api/v1/auth/google/login` with `idToken`;
+  - `POST /api/v1/auth/github/login` with `accessToken`.
+- The backend returns `token`, `refreshToken` and `tokenExpires` in the JSON
+  body. No authentication cookie is set by the backend.
+- **Decision**: the frontend stores the token pair in browser storage and sends
+  `Authorization: Bearer <token>` on every request. The current boilerplate
+  stores the pair in a cookie; this must be changed in the frontend before the
+  demo because the SRS forbids cookies for tokens.
+- Access token lifetime: 15 minutes. Refresh token lifetime: 30 days.
+- On `401`, the frontend calls `POST /api/v1/auth/refresh`, replaces the pair
+  and retries once. On refresh failure it clears the pair and redirects to
+  login.
+- Logout calls `POST /api/v1/auth/logout` and clears local state even if the
+  request fails.
 
-![Hexagonal Architecture Diagram](https://github.com/brocoders/nestjs-boilerplate/assets/6001723/6a6a763e-d1c9-43cc-910a-617cda3a71db)
+### GitHub OAuth notes
 
-## Motivation
+- The frontend requests the `read:user` and `user:email` scopes.
+- The backend calls `GET https://api.github.com/user`; if the public email is
+  missing, it calls `GET https://api.github.com/user/emails` and uses the
+  verified primary email.
+- `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` live in `.env` and are never
+  committed.
 
-The main reason for using Hexagonal Architecture is to separate the business logic from the infrastructure. This separation allows us to easily change the database, the way of uploading files, or any other infrastructure without changing the business logic.
+---
 
-## Description of the module structure
+## 3. Sandbox: run and grade
 
-```txt
-.
-├── domain
-│   └── [DOMAIN_ENTITY].ts
-├── dto
-│   ├── create.dto.ts
-│   ├── find-all.dto.ts
-│   └── update.dto.ts
-├── infrastructure
-│   └── persistence
-│       ├── document
-│       │   ├── document-persistence.module.ts
-│       │   ├── entities
-│       │   │   └── [SCHEMA].ts
-│       │   ├── mappers
-│       │   │   └── [MAPPER].ts
-│       │   └── repositories
-│       │       └── [ADAPTER].repository.ts
-│       ├── relational
-│       │   ├── entities
-│       │   │   └── [ENTITY].ts
-│       │   ├── mappers
-│       │   │   └── [MAPPER].ts
-│       │   ├── relational-persistence.module.ts
-│       │   └── repositories
-│       │       └── [ADAPTER].repository.ts
-│       └── [PORT].repository.ts
+**Decision: Option A - browser sandbox for "Run", server-side re-grade for
+"Submit".**
+
+- `POST /api/v1/labs/:id/run` (or the browser-side equivalent) executes the
+  learner query in a client-side SQLite/PGlite database created from the
+  dataset `setup_sql`. It is safe for the server and gives instant feedback.
+- `POST /api/v1/labs/:id/submit` must never trust the client result. The server
+  executes the learner query and the expected query against the same dataset in
+  an isolated, read-only sandbox (PGlite in Node or a dedicated read-only
+  PostgreSQL schema), then compares the two result sets.
+- Result comparison is set-based, not string-based. Row order is ignored unless
+  `lab.order_sensitive = true`.
+- Limits: only `SELECT`; maximum 5 seconds; maximum 1,000 returned rows; rate
+  limit per user per minute. The server rejects `INSERT`, `UPDATE`, `DELETE`,
+  `DROP`, `ALTER`, `CREATE`, transaction control and system functions.
+- Expected queries are stored in `lab.expected_query` and are never sent to the
+  browser.
+
+The sandbox implementation belongs to the Lab module (M3). This decision only
+fixes the contract and the security boundary.
+
+---
+
+## 4. Database and content model
+
+- ORM: TypeORM, `synchronize: false`. Every schema change needs a migration in
+  `src/database/migrations`.
+- Initial schema: `1715028537217-CreateUser.ts` and
+  `1793000000000-CreateSqlHubSchema.ts`.
+- Bilingual content is stored in translation tables:
+  - `course_translation`, `lesson_translation`;
+  - `quiz_translation`, `quiz_question_translation`,
+    `question_option_translation`;
+  - `lab_translation`.
+- Every translation table has a unique `(entity_id, locale)` index.
+- `user.locale` stores the preferred language (`vi` by default).
+- Seed data lives in `src/database/seeds/relational` and is idempotent. Run it
+  with `npm run seed:run` after `npm run migration:run`.
+
+### Ownership
+
+| Area | Owner | Backend folder |
+|---|---|---|
+| Auth, users, roles, statuses, project skeleton | Lead | `src/auth*`, `src/users`, `src/roles`, `src/statuses` |
+| Courses, lessons, progress | M1 | `src/courses`, `src/lessons` |
+| Quizzes | M2 | `src/quizzes` |
+| Labs, datasets, sandbox | M3 | `src/labs`, `src/datasets` |
+| Admin, seed aggregation, i18n checks, AI assistant | M4 | `src/admin`, `src/database/seeds` |
+
+Shared changes (global config, `app.module.ts`, migrations) need the lead's
+approval.
+
+---
+
+## 5. Internationalization
+
+- `nestjs-i18n` with `vi` as the fallback language.
+- Clients send the language in the `x-custom-lang` header; content endpoints
+  also accept `?locale=vi|en`.
+- All user-facing content must have both `vi` and `en` rows. Missing
+  translations fall back to the other locale, then to the slug/title.
+- The `vi` message catalogue lives in `src/i18n/vi`.
+
+---
+
+## 6. Security baseline
+
+- Secrets only in environment variables. The pre-commit hook
+  (`scripts/check-secrets.js`) and CI block known token patterns.
+- CORS origins come from `APP_CORS_ORIGINS` (comma-separated); the frontend
+  origin must be listed explicitly.
+- Helmet is enabled.
+- Input is validated with `class-validator`; unknown fields are rejected by the
+  global `ValidationPipe`.
+- Passwords are hashed with bcrypt. OAuth-only users have no password.
+- Admin endpoints require `@Roles(RoleEnum.admin)` and the JWT guard.
+- The sandbox is read-only and resource-limited.
+
+---
+
+## 7. Local development
+
+```bash
+cp .env.example .env
+npm install
+docker compose up -d postgres maildev adminer
+npm run migration:run
+npm run seed:run
+npm run start:dev
+```
+
+- API: `http://localhost:3001/api/v1`
+- Swagger: `http://localhost:3001/docs`
+- OpenAPI JSON: `http://localhost:3001/docs-json`
+- Seed accounts: `admin@example.com` / `secret`, `john.doe@example.com` /
+  `secret` (development only).
+
+---
+
+## 8. Boilerplate conventions (hexagonal architecture)
+
+The backend follows the Brocoders NestJS boilerplate structure:
+
+```text
+src/<module>/
+├── domain/                 # domain entity, no infrastructure dependency
+├── dto/                    # request/response DTOs with Swagger decorators
+├── infrastructure/
+│   └── persistence/
+│       └── relational/
+│           ├── entities/   # TypeORM entities
+│           ├── mappers/    # entity <-> domain mapper
+│           └── repositories/
 ├── controller.ts
 ├── module.ts
 └── service.ts
 ```
 
-`[DOMAIN ENTITY].ts` represents an entity used in the business logic. Domain entity has no dependencies on the database or any other infrastructure.
-
-`[SCHEMA].ts` represents the **database structure**. It is used in the document-oriented database (MongoDB).
-
-`[ENTITY].ts` represents the **database structure**. It is used in the relational database (PostgreSQL).
-
-`[MAPPER].ts` is a mapper that converts **database entity** to **domain entity** and vice versa.
-
-`[PORT].repository.ts` is a repository **port** that defines the methods for interacting with the database.
-
-`[ADAPTER].repository.ts` is a repository that implements the `[PORT].repository.ts`. It is used to interact with the database.
-
-`infrastructure` folder - contains all the infrastructure-related components such as `persistence`, `uploader`, `senders`, etc.
-
-Each component has `port` and `adapters`. `Port` is interface that define the methods for interacting with the infrastructure. `Adapters` are implementations of the `port`.
-
-## Recommendations
-
-### Repository
-
-Don't try to create universal methods in the repository because they are difficult to extend during the project's life. Instead of this create methods with a single responsibility.
-
-```typescript
-// ❌
-export class UsersRelationalRepository implements UserRepository {
-  async find(condition: UniversalConditionInterface): Promise<User> {
-    // ...
-  }
-}
-
-// ✅
-export class UsersRelationalRepository implements UserRepository {
-  async findByEmail(email: string): Promise<User> {
-    // ...
-  }
-  
-  async findByRoles(roles: string[]): Promise<User> {
-    // ...
-  }
-  
-  async findByIds(ids: string[]): Promise<User> {
-    // ...
-  }
-}
-```
-
----
-
-## FAQ
-
-### Is there a way to generate a new resource (controller, service, DTOs, etc) with Hexagonal Architecture?
-
-Yes, you can use the [CLI](cli.md) to generate a new resource with Hexagonal Architecture.
-
----
-
-## Links
-
-- [Dependency Inversion Principle](https://trilon.io/blog/dependency-inversion-principle) with NestJS.
-
----
-
-Previous: [Installing and Running](installing-and-running.md)
-
-Next: [Command Line Interface](cli.md)
+- Repositories expose small, intention-revealing methods instead of a generic
+  `find(condition)`.
+- Controllers stay thin; business rules live in services.
+- DTOs are the API contract; do not return TypeORM entities directly.
+- Each module owns its folder; shared changes require lead review.
