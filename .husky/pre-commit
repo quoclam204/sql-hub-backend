@@ -1,2 +1,3 @@
+node scripts/check-secrets.js
 npm run lint
 npm run test -- --passWithNoTests
