@@ -12,6 +12,7 @@ import { LabTranslationEntity } from './infrastructure/persistence/relational/en
       LabEntity,
       LabTranslationEntity,
       LabSubmissionEntity,
+      LabTranslationEntity,
     ]),
   ],
   controllers: [],

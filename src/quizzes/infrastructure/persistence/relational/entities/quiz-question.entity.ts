@@ -41,4 +41,13 @@ export class QuizQuestionEntity extends EntityRelationalHelper {
     cascade: true,
   })
   options: QuestionOptionEntity[];
+
+  @OneToMany(
+    () => QuizQuestionTranslationEntity,
+    (translation) => translation.question,
+    {
+      cascade: true,
+    },
+  )
+  translations: QuizQuestionTranslationEntity[];
 }

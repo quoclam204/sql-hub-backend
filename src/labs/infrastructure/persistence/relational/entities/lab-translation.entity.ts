@@ -32,6 +32,8 @@ export class LabTranslationEntity extends EntityRelationalHelper {
   @Column({ type: String })
   title: string;
 
+  @Column({ type: 'text', nullable: true })
+  description?: string;
   @Column({ type: 'text' })
   description: string;
 

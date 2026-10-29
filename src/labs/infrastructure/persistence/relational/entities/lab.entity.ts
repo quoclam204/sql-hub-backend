@@ -45,6 +45,11 @@ export class LabEntity extends EntityRelationalHelper {
   @Column({ type: 'boolean', default: false, name: 'order_sensitive' })
   orderSensitive: boolean;
 
+  @OneToMany(() => LabTranslationEntity, (translation) => translation.lab, {
+    cascade: true,
+  })
+  translations: LabTranslationEntity[];
+
   @CreateDateColumn()
   createdAt: Date;
 

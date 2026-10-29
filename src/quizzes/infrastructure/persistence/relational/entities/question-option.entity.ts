@@ -33,6 +33,9 @@ export class QuestionOptionEntity extends EntityRelationalHelper {
   )
   translations: QuestionOptionTranslationEntity[];
 
+  @Column({ type: String, name: 'option_text_en', nullable: true })
+  optionTextEn?: string;
+
   @Column({ type: 'boolean', default: false, name: 'is_correct' })
   isCorrect: boolean;
 
