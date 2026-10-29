@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatasetEntity } from './infrastructure/persistence/relational/entities/dataset.entity';
 import { LabEntity } from './infrastructure/persistence/relational/entities/lab.entity';
 import { LabSubmissionEntity } from './infrastructure/persistence/relational/entities/lab-submission.entity';
+import { LabTranslationEntity } from './infrastructure/persistence/relational/entities/lab-translation.entity';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { LabSubmissionEntity } from './infrastructure/persistence/relational/ent
       DatasetEntity,
       LabEntity,
       LabSubmissionEntity,
+      LabTranslationEntity,
     ]),
   ],
   controllers: [],

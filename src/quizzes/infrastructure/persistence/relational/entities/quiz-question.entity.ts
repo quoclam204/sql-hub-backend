@@ -9,6 +9,7 @@ import {
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { QuizEntity } from './quiz.entity';
 import { QuestionOptionEntity } from './question-option.entity';
+import { QuizQuestionTranslationEntity } from './quiz-question-translation.entity';
 
 @Entity({
   name: 'quiz_question',
@@ -37,4 +38,13 @@ export class QuizQuestionEntity extends EntityRelationalHelper {
     cascade: true,
   })
   options: QuestionOptionEntity[];
+
+  @OneToMany(
+    () => QuizQuestionTranslationEntity,
+    (translation) => translation.question,
+    {
+      cascade: true,
+    },
+  )
+  translations: QuizQuestionTranslationEntity[];
 }

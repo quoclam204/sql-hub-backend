@@ -25,6 +25,9 @@ export class QuestionOptionEntity extends EntityRelationalHelper {
   @Column({ type: String, name: 'option_text' })
   optionText: string;
 
+  @Column({ type: String, name: 'option_text_en', nullable: true })
+  optionTextEn?: string;
+
   @Column({ type: 'boolean', default: false, name: 'is_correct' })
   isCorrect: boolean;
 

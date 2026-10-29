@@ -4,12 +4,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { LessonEntity } from '../../../../../lessons/infrastructure/persistence/relational/entities/lesson.entity';
 import { DatasetEntity } from './dataset.entity';
+import { LabTranslationEntity } from './lab-translation.entity';
 
 @Entity({
   name: 'lab',
@@ -37,6 +39,11 @@ export class LabEntity extends EntityRelationalHelper {
 
   @Column({ type: 'boolean', default: false, name: 'order_sensitive' })
   orderSensitive: boolean;
+
+  @OneToMany(() => LabTranslationEntity, (translation) => translation.lab, {
+    cascade: true,
+  })
+  translations: LabTranslationEntity[];
 
   @CreateDateColumn()
   createdAt: Date;

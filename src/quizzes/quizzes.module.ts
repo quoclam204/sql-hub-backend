@@ -4,6 +4,7 @@ import { QuizEntity } from './infrastructure/persistence/relational/entities/qui
 import { QuizQuestionEntity } from './infrastructure/persistence/relational/entities/quiz-question.entity';
 import { QuestionOptionEntity } from './infrastructure/persistence/relational/entities/question-option.entity';
 import { QuizAttemptEntity } from './infrastructure/persistence/relational/entities/quiz-attempt.entity';
+import { QuizQuestionTranslationEntity } from './infrastructure/persistence/relational/entities/quiz-question-translation.entity';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { QuizAttemptEntity } from './infrastructure/persistence/relational/entit
       QuizQuestionEntity,
       QuestionOptionEntity,
       QuizAttemptEntity,
+      QuizQuestionTranslationEntity,
     ]),
   ],
   controllers: [],
