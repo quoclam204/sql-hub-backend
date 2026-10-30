@@ -78,7 +78,6 @@ export class AdminQuizQuestionsService {
           isCorrect: opt.isCorrect,
           order: opt.order,
         })),
-        createdAt: q.createdAt,
       };
     });
   }
@@ -112,7 +111,6 @@ export class AdminQuizQuestionsService {
         isCorrect: opt.isCorrect,
         order: opt.order,
       })),
-      createdAt: question.createdAt,
     };
   }
 
@@ -120,12 +118,16 @@ export class AdminQuizQuestionsService {
     // 1. Verify quiz exists
     const quiz = await this.quizRepo.findOne({ where: { id: dto.quizId } });
     if (!quiz) {
-      throw new BadRequestException(`Quiz with ID ${dto.quizId} does not exist`);
+      throw new BadRequestException(
+        `Quiz with ID ${dto.quizId} does not exist`,
+      );
     }
 
     // 2. Validate options
     if (!dto.options || dto.options.length < 2) {
-      throw new BadRequestException('A quiz question must have at least 2 options');
+      throw new BadRequestException(
+        'A quiz question must have at least 2 options',
+      );
     }
 
     const correctOptions = dto.options.filter((o) => o.isCorrect);
@@ -140,7 +142,7 @@ export class AdminQuizQuestionsService {
       quizId: dto.quizId,
       order: dto.order ?? 1,
       questionText: dto.questionTextVi,
-      explanation: dto.explanationVi || null,
+      explanation: dto.explanationVi || undefined,
     });
     const savedQuestion = await this.questionRepo.save(question);
 
@@ -150,13 +152,13 @@ export class AdminQuizQuestionsService {
         questionId: savedQuestion.id,
         locale: 'vi',
         questionText: dto.questionTextVi,
-        explanation: dto.explanationVi || null,
+        explanation: dto.explanationVi || undefined,
       }),
       this.translationRepo.create({
         questionId: savedQuestion.id,
         locale: 'en',
         questionText: dto.questionTextEn,
-        explanation: dto.explanationEn || null,
+        explanation: dto.explanationEn || undefined,
       }),
     ];
     await this.translationRepo.save(translations);
@@ -189,7 +191,9 @@ export class AdminQuizQuestionsService {
     if (dto.quizId) {
       const quiz = await this.quizRepo.findOne({ where: { id: dto.quizId } });
       if (!quiz) {
-        throw new BadRequestException(`Quiz with ID ${dto.quizId} does not exist`);
+        throw new BadRequestException(
+          `Quiz with ID ${dto.quizId} does not exist`,
+        );
       }
       question.quizId = dto.quizId;
     }
@@ -203,7 +207,7 @@ export class AdminQuizQuestionsService {
     }
 
     if (dto.explanationVi !== undefined) {
-      question.explanation = dto.explanationVi || null;
+      question.explanation = dto.explanationVi || undefined;
     }
 
     await this.questionRepo.save(question);
@@ -218,14 +222,15 @@ export class AdminQuizQuestionsService {
       let trans = question.translations?.find((t) => t.locale === locale);
       if (trans) {
         if (questionText !== undefined) trans.questionText = questionText;
-        if (explanation !== undefined) trans.explanation = explanation || null;
+        if (explanation !== undefined)
+          trans.explanation = explanation || undefined;
         await this.translationRepo.save(trans);
       } else if (questionText !== undefined) {
         trans = this.translationRepo.create({
           questionId: question.id,
           locale,
           questionText,
-          explanation: explanation || null,
+          explanation: explanation || undefined,
         });
         await this.translationRepo.save(trans);
       }
@@ -241,7 +246,9 @@ export class AdminQuizQuestionsService {
     // Update options if provided
     if (dto.options) {
       if (dto.options.length < 2) {
-        throw new BadRequestException('A quiz question must have at least 2 options');
+        throw new BadRequestException(
+          'A quiz question must have at least 2 options',
+        );
       }
       const correctOptions = dto.options.filter((o) => o.isCorrect);
       if (correctOptions.length !== 1) {
@@ -283,6 +290,9 @@ export class AdminQuizQuestionsService {
     // Options and translations have onDelete: CASCADE, so remove safely deletes them
     await this.questionRepo.remove(question);
 
-    return { success: true, message: `Quiz question ${id} successfully deleted` };
+    return {
+      success: true,
+      message: `Quiz question ${id} successfully deleted`,
+    };
   }
 }

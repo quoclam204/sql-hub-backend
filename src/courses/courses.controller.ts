@@ -38,4 +38,21 @@ export class CoursesController {
   ) {
     return this.coursesService.findBySlug(slug, query.locale || 'vi');
   }
+
+  @Get(':slug/lessons/:lessonSlug')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    description: 'Get a localized lesson with its quiz questions and SQL labs',
+  })
+  async findLesson(
+    @Param('slug') courseSlug: string,
+    @Param('lessonSlug') lessonSlug: string,
+    @Query() query: QueryCourseDto,
+  ) {
+    return this.coursesService.findLesson(
+      courseSlug,
+      lessonSlug,
+      query.locale || 'vi',
+    );
+  }
 }

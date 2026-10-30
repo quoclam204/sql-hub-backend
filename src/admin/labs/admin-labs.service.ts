@@ -134,7 +134,10 @@ export class AdminLabsService {
 
     // 3. Security: Check expected query is a read query (SELECT)
     const normalizedQuery = dto.expectedQuery.trim().toUpperCase();
-    if (!normalizedQuery.startsWith('SELECT') && !normalizedQuery.startsWith('WITH')) {
+    if (
+      !normalizedQuery.startsWith('SELECT') &&
+      !normalizedQuery.startsWith('WITH')
+    ) {
       throw new BadRequestException(
         'Expected query must be a valid read query (starting with SELECT or WITH)',
       );
@@ -155,15 +158,15 @@ export class AdminLabsService {
         labId: savedLab.id,
         locale: 'vi',
         title: dto.titleVi,
-        description: dto.descriptionVi || null,
-        hint: dto.hintVi || null,
+        description: dto.descriptionVi || undefined,
+        hint: dto.hintVi || undefined,
       }),
       this.translationRepo.create({
         labId: savedLab.id,
         locale: 'en',
         title: dto.titleEn,
-        description: dto.descriptionEn || null,
-        hint: dto.hintEn || null,
+        description: dto.descriptionEn || undefined,
+        hint: dto.hintEn || undefined,
       }),
     ];
     await this.translationRepo.save(translations);
@@ -240,16 +243,17 @@ export class AdminLabsService {
       let trans = lab.translations?.find((t) => t.locale === locale);
       if (trans) {
         if (title !== undefined) trans.title = title;
-        if (description !== undefined) trans.description = description || null;
-        if (hint !== undefined) trans.hint = hint || null;
+        if (description !== undefined)
+          trans.description = description || undefined;
+        if (hint !== undefined) trans.hint = hint || undefined;
         await this.translationRepo.save(trans);
       } else if (title !== undefined) {
         trans = this.translationRepo.create({
           labId: lab.id,
           locale,
           title,
-          description: description || null,
-          hint: hint || null,
+          description: description || undefined,
+          hint: hint || undefined,
         });
         await this.translationRepo.save(trans);
       }
