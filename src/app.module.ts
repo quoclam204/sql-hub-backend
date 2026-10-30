@@ -28,6 +28,8 @@ import { QuizzesModule } from './quizzes/quizzes.module';
 import { LabsModule } from './labs/labs.module';
 import { ProgressModule } from './progress/progress.module';
 import { AdminModule } from './admin/admin.module';
+import appleConfig from './auth-apple/config/apple.config';
+import facebookConfig from './auth-facebook/config/facebook.config';
 
 const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
   useClass: TypeOrmConfigService,
@@ -48,6 +50,8 @@ const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
         fileConfig,
         googleConfig,
         githubConfig,
+        appleConfig,
+        facebookConfig,
       ],
       envFilePath: ['.env'],
     }),

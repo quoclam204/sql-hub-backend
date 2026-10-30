@@ -89,7 +89,7 @@ export class UsersService {
       }
 
       role = {
-        id: createUserDto.role.id,
+        id: Number(createUserDto.role.id),
       };
     }
 
@@ -109,7 +109,7 @@ export class UsersService {
       }
 
       status = {
-        id: createUserDto.status.id,
+        id: Number(createUserDto.status.id),
       };
     }
 
@@ -244,7 +244,7 @@ export class UsersService {
       }
 
       role = {
-        id: updateUserDto.role.id,
+        id: Number(updateUserDto.role.id),
       };
     }
 
@@ -264,7 +264,7 @@ export class UsersService {
       }
 
       status = {
-        id: updateUserDto.status.id,
+        id: Number(updateUserDto.status.id),
       };
     }
 

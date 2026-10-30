@@ -5,6 +5,8 @@ import { FileConfig } from '../files/config/file-config.type';
 import { GoogleConfig } from '../auth-google/config/google-config.type';
 import { GithubConfig } from '../auth-github/config/github-config.type';
 import { MailConfig } from '../mail/config/mail-config.type';
+import { AppleConfig } from '../auth-apple/config/apple-config.type';
+import { FacebookConfig } from '../auth-facebook/config/facebook-config.type';
 
 export type AllConfigType = {
   app: AppConfig;
@@ -14,4 +16,6 @@ export type AllConfigType = {
   google: GoogleConfig;
   github: GithubConfig;
   mail: MailConfig;
+  apple: AppleConfig;
+  facebook: FacebookConfig;
 };

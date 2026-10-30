@@ -8,7 +8,7 @@ export class User {
   @ApiProperty({
     type: Number,
   })
-  id: number;
+  id: number | string;
 
   @ApiProperty({
     type: String,
