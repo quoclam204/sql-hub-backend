@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import type { Relation } from 'typeorm';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { CourseTranslationEntity } from './course-translation.entity';
 import { LessonEntity } from '../../../../../lessons/infrastructure/persistence/relational/entities/lesson.entity';
@@ -31,10 +32,10 @@ export class CourseEntity extends EntityRelationalHelper {
   @OneToMany(() => CourseTranslationEntity, (translation) => translation.course, {
     cascade: true,
   })
-  translations: CourseTranslationEntity[];
+  translations: Relation<CourseTranslationEntity[]>;
 
   @OneToMany(() => LessonEntity, (lesson) => lesson.course)
-  lessons: LessonEntity[];
+  lessons: Relation<LessonEntity[]>;
 
   @CreateDateColumn()
   createdAt: Date;
