@@ -35,10 +35,8 @@ export class AdminLessonsService {
       id: c.id,
       slug: c.slug,
       order: c.order,
-      titleVi:
-        c.translations?.find((t) => t.locale === 'vi')?.title || c.slug,
-      titleEn:
-        c.translations?.find((t) => t.locale === 'en')?.title || c.slug,
+      titleVi: c.translations?.find((t) => t.locale === 'vi')?.title || c.slug,
+      titleEn: c.translations?.find((t) => t.locale === 'en')?.title || c.slug,
     }));
   }
 

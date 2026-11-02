@@ -8,18 +8,25 @@ import {
 } from 'class-validator';
 
 export class CreateLabDto {
-  @ApiProperty({ example: 1, description: 'ID of the dataset to be used in this lab' })
+  @ApiProperty({
+    example: 1,
+    description: 'ID of the dataset to be used in this lab',
+  })
   @IsInt()
   @IsNotEmpty()
   datasetId: number;
 
-  @ApiPropertyOptional({ example: 1, description: 'Optional ID of the lesson linked to this lab' })
+  @ApiPropertyOptional({
+    example: 1,
+    description: 'Optional ID of the lesson linked to this lab',
+  })
   @IsOptional()
   @IsInt()
   lessonId?: number;
 
   @ApiProperty({
-    example: 'SELECT id, username, email FROM users WHERE is_active = true ORDER BY id ASC;',
+    example:
+      'SELECT id, username, email FROM users WHERE is_active = true ORDER BY id ASC;',
     description: 'Expected SQL query solution',
   })
   @IsString()
@@ -43,7 +50,8 @@ export class CreateLabDto {
   titleVi: string;
 
   @ApiPropertyOptional({
-    example: 'Viết câu truy vấn SELECT để lấy các cột id, username, email từ bảng users...',
+    example:
+      'Viết câu truy vấn SELECT để lấy các cột id, username, email từ bảng users...',
     description: 'Detailed instructions in Vietnamese',
   })
   @IsOptional()
@@ -51,7 +59,8 @@ export class CreateLabDto {
   descriptionVi?: string;
 
   @ApiPropertyOptional({
-    example: 'Sử dụng mệnh đề WHERE is_active = true kết hợp với ORDER BY id ASC.',
+    example:
+      'Sử dụng mệnh đề WHERE is_active = true kết hợp với ORDER BY id ASC.',
     description: 'Helpful hint in Vietnamese',
   })
   @IsOptional()
@@ -67,7 +76,8 @@ export class CreateLabDto {
   titleEn: string;
 
   @ApiPropertyOptional({
-    example: 'Write a SELECT query to retrieve id, username, email from the users table...',
+    example:
+      'Write a SELECT query to retrieve id, username, email from the users table...',
     description: 'Detailed instructions in English',
   })
   @IsOptional()
@@ -75,7 +85,8 @@ export class CreateLabDto {
   descriptionEn?: string;
 
   @ApiPropertyOptional({
-    example: 'Use the WHERE is_active = true clause combined with ORDER BY id ASC.',
+    example:
+      'Use the WHERE is_active = true clause combined with ORDER BY id ASC.',
     description: 'Helpful hint in English',
   })
   @IsOptional()

@@ -30,12 +30,18 @@ export class LessonTranslationItemDto {
 }
 
 export class CreateLessonDto {
-  @ApiProperty({ example: 1, description: 'ID of the course this lesson belongs to' })
+  @ApiProperty({
+    example: 1,
+    description: 'ID of the course this lesson belongs to',
+  })
   @IsInt()
   @IsNotEmpty()
   courseId: number;
 
-  @ApiProperty({ example: 'select-co-ban', description: 'Unique slug for lesson' })
+  @ApiProperty({
+    example: 'select-co-ban',
+    description: 'Unique slug for lesson',
+  })
   @IsString()
   @IsNotEmpty()
   slug: string;

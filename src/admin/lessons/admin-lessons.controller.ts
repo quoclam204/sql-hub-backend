@@ -11,13 +11,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiTags,
-  ApiOperation,
-  ApiOkResponse,
-  ApiCreatedResponse,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../../roles/roles.decorator';
 import { RoleEnum } from '../../roles/roles.enum';
@@ -39,14 +33,18 @@ export class AdminLessonsController {
 
   @Get('courses')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get list of available courses for lesson creation' })
+  @ApiOperation({
+    summary: 'Get list of available courses for lesson creation',
+  })
   findAllCourses() {
     return this.lessonsService.findAllCourses();
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'List all lessons (optionally filtered by courseId)' })
+  @ApiOperation({
+    summary: 'List all lessons (optionally filtered by courseId)',
+  })
   findAll(@Query('courseId') courseId?: string) {
     return this.lessonsService.findAll(courseId ? Number(courseId) : undefined);
   }
@@ -74,7 +72,10 @@ export class AdminLessonsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Delete a lesson (guarded against cascading learner progress loss)' })
+  @ApiOperation({
+    summary:
+      'Delete a lesson (guarded against cascading learner progress loss)',
+  })
   delete(@Param('id') id: string) {
     return this.lessonsService.delete(Number(id));
   }

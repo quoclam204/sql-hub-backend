@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { AdminLessonsService } from './admin-lessons.service';
 import { LessonEntity } from '../../lessons/infrastructure/persistence/relational/entities/lesson.entity';
 import { LessonTranslationEntity } from '../../lessons/infrastructure/persistence/relational/entities/lesson-translation.entity';
@@ -11,8 +15,12 @@ import { CourseEntity } from '../../courses/infrastructure/persistence/relationa
 describe('AdminLessonsService', () => {
   let service: AdminLessonsService;
   let lessonRepo: jest.Mocked<Partial<Repository<LessonEntity>>>;
-  let lessonTranslationRepo: jest.Mocked<Partial<Repository<LessonTranslationEntity>>>;
-  let lessonProgressRepo: jest.Mocked<Partial<Repository<LessonProgressEntity>>>;
+  let lessonTranslationRepo: jest.Mocked<
+    Partial<Repository<LessonTranslationEntity>>
+  >;
+  let lessonProgressRepo: jest.Mocked<
+    Partial<Repository<LessonProgressEntity>>
+  >;
   let courseRepo: jest.Mocked<Partial<Repository<CourseEntity>>>;
 
   beforeEach(async () => {
@@ -40,8 +48,14 @@ describe('AdminLessonsService', () => {
       providers: [
         AdminLessonsService,
         { provide: getRepositoryToken(LessonEntity), useValue: lessonRepo },
-        { provide: getRepositoryToken(LessonTranslationEntity), useValue: lessonTranslationRepo },
-        { provide: getRepositoryToken(LessonProgressEntity), useValue: lessonProgressRepo },
+        {
+          provide: getRepositoryToken(LessonTranslationEntity),
+          useValue: lessonTranslationRepo,
+        },
+        {
+          provide: getRepositoryToken(LessonProgressEntity),
+          useValue: lessonProgressRepo,
+        },
         { provide: getRepositoryToken(CourseEntity), useValue: courseRepo },
       ],
     }).compile();
@@ -68,8 +82,13 @@ describe('AdminLessonsService', () => {
     });
 
     it('should throw ConflictException if slug already exists', async () => {
-      (courseRepo.findOne as jest.Mock).mockResolvedValue({ id: 1 } as CourseEntity);
-      (lessonRepo.findOne as jest.Mock).mockResolvedValue({ id: 2, slug: 'test-lesson' } as LessonEntity);
+      (courseRepo.findOne as jest.Mock).mockResolvedValue({
+        id: 1,
+      } as CourseEntity);
+      (lessonRepo.findOne as jest.Mock).mockResolvedValue({
+        id: 2,
+        slug: 'test-lesson',
+      } as LessonEntity);
 
       await expect(
         service.create({
@@ -82,7 +101,9 @@ describe('AdminLessonsService', () => {
     });
 
     it('should successfully create a lesson with bilingual content', async () => {
-      (courseRepo.findOne as jest.Mock).mockResolvedValue({ id: 1 } as CourseEntity);
+      (courseRepo.findOne as jest.Mock).mockResolvedValue({
+        id: 1,
+      } as CourseEntity);
       (lessonRepo.findOne as jest.Mock)
         .mockResolvedValueOnce(null) // uniqueness check
         .mockResolvedValueOnce({
@@ -91,14 +112,36 @@ describe('AdminLessonsService', () => {
           slug: 'intro-sql',
           order: 1,
           translations: [
-            { id: 1, locale: 'vi', title: 'Bài 1: Giới thiệu SQL', contentMd: '# Nội dung' },
-            { id: 2, locale: 'en', title: 'Lesson 1: Intro SQL', contentMd: '# Content' },
+            {
+              id: 1,
+              locale: 'vi',
+              title: 'Bài 1: Giới thiệu SQL',
+              contentMd: '# Nội dung',
+            },
+            {
+              id: 2,
+              locale: 'en',
+              title: 'Lesson 1: Intro SQL',
+              contentMd: '# Content',
+            },
           ],
         } as unknown as LessonEntity); // findOne result
 
-      (lessonRepo.create as jest.Mock).mockReturnValue({ id: 10, courseId: 1, slug: 'intro-sql', order: 1 });
-      (lessonRepo.save as jest.Mock).mockResolvedValue({ id: 10, courseId: 1, slug: 'intro-sql', order: 1 });
-      (lessonTranslationRepo.create as jest.Mock).mockImplementation((dto) => dto);
+      (lessonRepo.create as jest.Mock).mockReturnValue({
+        id: 10,
+        courseId: 1,
+        slug: 'intro-sql',
+        order: 1,
+      });
+      (lessonRepo.save as jest.Mock).mockResolvedValue({
+        id: 10,
+        courseId: 1,
+        slug: 'intro-sql',
+        order: 1,
+      });
+      (lessonTranslationRepo.create as jest.Mock).mockImplementation(
+        (dto) => dto,
+      );
       (lessonTranslationRepo.save as jest.Mock).mockResolvedValue([]);
 
       const result = await service.create({
@@ -125,7 +168,9 @@ describe('AdminLessonsService', () => {
     });
 
     it('should prevent deletion and throw BadRequestException if learners have progress', async () => {
-      (lessonRepo.findOne as jest.Mock).mockResolvedValue({ id: 5 } as LessonEntity);
+      (lessonRepo.findOne as jest.Mock).mockResolvedValue({
+        id: 5,
+      } as LessonEntity);
       (lessonProgressRepo.count as jest.Mock).mockResolvedValue(3); // 3 learners have progress
 
       await expect(service.delete(5)).rejects.toThrow(BadRequestException);

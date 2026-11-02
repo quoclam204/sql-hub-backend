@@ -18,7 +18,9 @@ export class QuizQuestionEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => QuizEntity, (quiz) => quiz.questions, { onDelete: 'CASCADE' })
+  @ManyToOne(() => QuizEntity, (quiz) => quiz.questions, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'quiz_id' })
   quiz: QuizEntity;
 

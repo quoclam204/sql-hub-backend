@@ -11,11 +11,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiTags,
-  ApiOperation,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../../roles/roles.decorator';
 import { RoleEnum } from '../../roles/roles.enum';
@@ -51,28 +47,36 @@ export class AdminLabsController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get single lab with dataset, lesson, and translations' })
+  @ApiOperation({
+    summary: 'Get single lab with dataset, lesson, and translations',
+  })
   findOne(@Param('id') id: string) {
     return this.labsService.findOne(Number(id));
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create new SQL lab with expected query and bilingual content' })
+  @ApiOperation({
+    summary: 'Create new SQL lab with expected query and bilingual content',
+  })
   create(@Body() dto: CreateLabDto) {
     return this.labsService.create(dto);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Update existing lab, dataset link, query, or translations' })
+  @ApiOperation({
+    summary: 'Update existing lab, dataset link, query, or translations',
+  })
   update(@Param('id') id: string, @Body() dto: UpdateLabDto) {
     return this.labsService.update(Number(id), dto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Delete a lab (guarded against cascading learner submission loss)' })
+  @ApiOperation({
+    summary: 'Delete a lab (guarded against cascading learner submission loss)',
+  })
   delete(@Param('id') id: string) {
     return this.labsService.delete(Number(id));
   }

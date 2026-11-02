@@ -12,7 +12,9 @@ describe('AdminQuizQuestionsService', () => {
   let service: AdminQuizQuestionsService;
   let questionRepo: jest.Mocked<Partial<Repository<QuizQuestionEntity>>>;
   let optionRepo: jest.Mocked<Partial<Repository<QuestionOptionEntity>>>;
-  let translationRepo: jest.Mocked<Partial<Repository<QuizQuestionTranslationEntity>>>;
+  let translationRepo: jest.Mocked<
+    Partial<Repository<QuizQuestionTranslationEntity>>
+  >;
   let quizRepo: jest.Mocked<Partial<Repository<QuizEntity>>>;
 
   beforeEach(async () => {
@@ -41,9 +43,18 @@ describe('AdminQuizQuestionsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AdminQuizQuestionsService,
-        { provide: getRepositoryToken(QuizQuestionEntity), useValue: questionRepo },
-        { provide: getRepositoryToken(QuestionOptionEntity), useValue: optionRepo },
-        { provide: getRepositoryToken(QuizQuestionTranslationEntity), useValue: translationRepo },
+        {
+          provide: getRepositoryToken(QuizQuestionEntity),
+          useValue: questionRepo,
+        },
+        {
+          provide: getRepositoryToken(QuestionOptionEntity),
+          useValue: optionRepo,
+        },
+        {
+          provide: getRepositoryToken(QuizQuestionTranslationEntity),
+          useValue: translationRepo,
+        },
         { provide: getRepositoryToken(QuizEntity), useValue: quizRepo },
       ],
     }).compile();
@@ -73,7 +84,9 @@ describe('AdminQuizQuestionsService', () => {
     });
 
     it('should throw BadRequestException if less than 2 options provided', async () => {
-      (quizRepo.findOne as jest.Mock).mockResolvedValue({ id: 1 } as QuizEntity);
+      (quizRepo.findOne as jest.Mock).mockResolvedValue({
+        id: 1,
+      } as QuizEntity);
 
       await expect(
         service.create({
@@ -86,7 +99,9 @@ describe('AdminQuizQuestionsService', () => {
     });
 
     it('should throw BadRequestException if no option is marked as correct', async () => {
-      (quizRepo.findOne as jest.Mock).mockResolvedValue({ id: 1 } as QuizEntity);
+      (quizRepo.findOne as jest.Mock).mockResolvedValue({
+        id: 1,
+      } as QuizEntity);
 
       await expect(
         service.create({
@@ -102,7 +117,9 @@ describe('AdminQuizQuestionsService', () => {
     });
 
     it('should throw BadRequestException if multiple options are marked as correct', async () => {
-      (quizRepo.findOne as jest.Mock).mockResolvedValue({ id: 1 } as QuizEntity);
+      (quizRepo.findOne as jest.Mock).mockResolvedValue({
+        id: 1,
+      } as QuizEntity);
 
       await expect(
         service.create({
@@ -118,7 +135,9 @@ describe('AdminQuizQuestionsService', () => {
     });
 
     it('should create question, bilingual translations, and options successfully', async () => {
-      (quizRepo.findOne as jest.Mock).mockResolvedValue({ id: 1 } as QuizEntity);
+      (quizRepo.findOne as jest.Mock).mockResolvedValue({
+        id: 1,
+      } as QuizEntity);
       (questionRepo.create as jest.Mock).mockReturnValue({ id: 10, quizId: 1 });
       (questionRepo.save as jest.Mock).mockResolvedValue({ id: 10, quizId: 1 });
       (translationRepo.create as jest.Mock).mockImplementation((d) => d);
@@ -131,12 +150,34 @@ describe('AdminQuizQuestionsService', () => {
         quizId: 1,
         questionText: 'Lệnh nào dùng để đọc dữ liệu?',
         options: [
-          { id: 1, optionText: 'SELECT', optionTextEn: 'SELECT', isCorrect: true, order: 1 },
-          { id: 2, optionText: 'DELETE', optionTextEn: 'DELETE', isCorrect: false, order: 2 },
+          {
+            id: 1,
+            optionText: 'SELECT',
+            optionTextEn: 'SELECT',
+            isCorrect: true,
+            order: 1,
+          },
+          {
+            id: 2,
+            optionText: 'DELETE',
+            optionTextEn: 'DELETE',
+            isCorrect: false,
+            order: 2,
+          },
         ],
         translations: [
-          { id: 1, locale: 'vi', questionText: 'Lệnh nào dùng để đọc dữ liệu?', explanation: '' },
-          { id: 2, locale: 'en', questionText: 'Which command is used to read data?', explanation: '' },
+          {
+            id: 1,
+            locale: 'vi',
+            questionText: 'Lệnh nào dùng để đọc dữ liệu?',
+            explanation: '',
+          },
+          {
+            id: 2,
+            locale: 'en',
+            questionText: 'Which command is used to read data?',
+            explanation: '',
+          },
         ],
       } as unknown as QuizQuestionEntity);
 
@@ -145,8 +186,18 @@ describe('AdminQuizQuestionsService', () => {
         questionTextVi: 'Lệnh nào dùng để đọc dữ liệu?',
         questionTextEn: 'Which command is used to read data?',
         options: [
-          { optionTextVi: 'SELECT', optionTextEn: 'SELECT', isCorrect: true, order: 1 },
-          { optionTextVi: 'DELETE', optionTextEn: 'DELETE', isCorrect: false, order: 2 },
+          {
+            optionTextVi: 'SELECT',
+            optionTextEn: 'SELECT',
+            isCorrect: true,
+            order: 1,
+          },
+          {
+            optionTextVi: 'DELETE',
+            optionTextEn: 'DELETE',
+            isCorrect: false,
+            order: 2,
+          },
         ],
       });
 

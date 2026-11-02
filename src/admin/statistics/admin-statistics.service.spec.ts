@@ -12,7 +12,9 @@ import { LabSubmissionEntity } from '../../labs/infrastructure/persistence/relat
 describe('AdminStatisticsService', () => {
   let service: AdminStatisticsService;
   let userRepo: jest.Mocked<Partial<Repository<UserEntity>>>;
-  let lessonProgressRepo: jest.Mocked<Partial<Repository<LessonProgressEntity>>>;
+  let lessonProgressRepo: jest.Mocked<
+    Partial<Repository<LessonProgressEntity>>
+  >;
   let lessonRepo: jest.Mocked<Partial<Repository<LessonEntity>>>;
   let quizAttemptRepo: jest.Mocked<Partial<Repository<QuizAttemptEntity>>>;
   let labRepo: jest.Mocked<Partial<Repository<LabEntity>>>;

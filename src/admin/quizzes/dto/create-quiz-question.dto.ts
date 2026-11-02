@@ -11,17 +11,26 @@ import {
 import { Type } from 'class-transformer';
 
 export class CreateQuestionOptionDto {
-  @ApiProperty({ example: 'SELECT * FROM users;', description: 'Option text in Vietnamese' })
+  @ApiProperty({
+    example: 'SELECT * FROM users;',
+    description: 'Option text in Vietnamese',
+  })
   @IsString()
   @IsNotEmpty()
   optionTextVi: string;
 
-  @ApiPropertyOptional({ example: 'SELECT * FROM users;', description: 'Option text in English' })
+  @ApiPropertyOptional({
+    example: 'SELECT * FROM users;',
+    description: 'Option text in English',
+  })
   @IsOptional()
   @IsString()
   optionTextEn?: string;
 
-  @ApiProperty({ example: true, description: 'Whether this option is the correct answer' })
+  @ApiProperty({
+    example: true,
+    description: 'Whether this option is the correct answer',
+  })
   @IsBoolean()
   isCorrect: boolean;
 
@@ -32,7 +41,10 @@ export class CreateQuestionOptionDto {
 }
 
 export class CreateQuizQuestionDto {
-  @ApiProperty({ example: 1, description: 'ID of the quiz this question belongs to' })
+  @ApiProperty({
+    example: 1,
+    description: 'ID of the quiz this question belongs to',
+  })
   @IsInt()
   @IsNotEmpty()
   quizId: number;
@@ -76,7 +88,8 @@ export class CreateQuizQuestionDto {
 
   @ApiProperty({
     type: [CreateQuestionOptionDto],
-    description: 'List of answer choices (minimum 2 options, exactly 1 must be correct)',
+    description:
+      'List of answer choices (minimum 2 options, exactly 1 must be correct)',
   })
   @IsArray()
   @ValidateNested({ each: true })

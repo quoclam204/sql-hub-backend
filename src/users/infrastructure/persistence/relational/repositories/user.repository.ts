@@ -109,7 +109,7 @@ export class UsersRelationalRepository implements UserRepository {
     }
 
     const cleanedPayload = Object.fromEntries(
-      Object.entries(payload).filter(([_, value]) => value !== undefined),
+      Object.entries(payload).filter(([, value]) => value !== undefined),
     );
 
     const updatedEntity = await this.usersRepository.save(

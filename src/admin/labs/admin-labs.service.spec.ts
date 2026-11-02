@@ -46,8 +46,14 @@ describe('AdminLabsService', () => {
         AdminLabsService,
         { provide: getRepositoryToken(LabEntity), useValue: labRepo },
         { provide: getRepositoryToken(DatasetEntity), useValue: datasetRepo },
-        { provide: getRepositoryToken(LabTranslationEntity), useValue: translationRepo },
-        { provide: getRepositoryToken(LabSubmissionEntity), useValue: submissionRepo },
+        {
+          provide: getRepositoryToken(LabTranslationEntity),
+          useValue: translationRepo,
+        },
+        {
+          provide: getRepositoryToken(LabSubmissionEntity),
+          useValue: submissionRepo,
+        },
         { provide: getRepositoryToken(LessonEntity), useValue: lessonRepo },
       ],
     }).compile();
@@ -74,7 +80,9 @@ describe('AdminLabsService', () => {
     });
 
     it('should throw BadRequestException if expectedQuery is not a SELECT/WITH query', async () => {
-      (datasetRepo.findOne as jest.Mock).mockResolvedValue({ id: 1 } as DatasetEntity);
+      (datasetRepo.findOne as jest.Mock).mockResolvedValue({
+        id: 1,
+      } as DatasetEntity);
 
       await expect(
         service.create({
@@ -87,7 +95,9 @@ describe('AdminLabsService', () => {
     });
 
     it('should create lab and bilingual translations successfully', async () => {
-      (datasetRepo.findOne as jest.Mock).mockResolvedValue({ id: 1 } as DatasetEntity);
+      (datasetRepo.findOne as jest.Mock).mockResolvedValue({
+        id: 1,
+      } as DatasetEntity);
       (labRepo.create as jest.Mock).mockReturnValue({ id: 5, datasetId: 1 });
       (labRepo.save as jest.Mock).mockResolvedValue({ id: 5, datasetId: 1 });
       (translationRepo.create as jest.Mock).mockImplementation((d) => d);
@@ -98,8 +108,20 @@ describe('AdminLabsService', () => {
         datasetId: 1,
         expectedQuery: 'SELECT * FROM users;',
         translations: [
-          { id: 1, locale: 'vi', title: 'Lab 1 Tiếng Việt', description: '', hint: '' },
-          { id: 2, locale: 'en', title: 'Lab 1 English', description: '', hint: '' },
+          {
+            id: 1,
+            locale: 'vi',
+            title: 'Lab 1 Tiếng Việt',
+            description: '',
+            hint: '',
+          },
+          {
+            id: 2,
+            locale: 'en',
+            title: 'Lab 1 English',
+            description: '',
+            hint: '',
+          },
         ],
       } as unknown as LabEntity);
 
