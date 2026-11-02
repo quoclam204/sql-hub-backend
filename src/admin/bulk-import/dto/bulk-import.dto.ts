@@ -38,7 +38,8 @@ export class BulkImportRequestDto {
   format: BulkImportFormatEnum;
 
   @ApiProperty({
-    example: '[{"courseId": 1, "slug": "intro-sql", "titleVi": "Nhập môn SQL", "titleEn": "Intro to SQL", "contentVi": "# Lý thuyết...", "contentEn": "# Theory..."}]',
+    example:
+      '[{"courseId": 1, "slug": "intro-sql", "titleVi": "Nhập môn SQL", "titleEn": "Intro to SQL", "contentVi": "# Lý thuyết...", "contentEn": "# Theory..."}]',
     description: 'Raw JSON or Markdown content string',
   })
   @IsString()
@@ -47,7 +48,8 @@ export class BulkImportRequestDto {
 
   @ApiPropertyOptional({
     example: false,
-    description: 'If true, validates and parses content without writing to database',
+    description:
+      'If true, validates and parses content without writing to database',
   })
   @IsOptional()
   @IsBoolean()

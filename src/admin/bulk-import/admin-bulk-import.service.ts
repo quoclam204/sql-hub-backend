@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Repository } from 'typeorm';
 import { LessonEntity } from '../../lessons/infrastructure/persistence/relational/entities/lesson.entity';
@@ -236,13 +233,11 @@ export class AdminBulkImportService {
           items = parsed;
         } else if (parsed && typeof parsed === 'object') {
           // Check common wrapper keys
-          items =
-            parsed.lessons ||
+          items = parsed.lessons ||
             parsed.quizQuestions ||
             parsed.questions ||
             parsed.labs ||
-            parsed.items ||
-            [parsed];
+            parsed.items || [parsed];
         }
 
         if (!Array.isArray(items)) {
@@ -320,7 +315,9 @@ export class AdminBulkImportService {
 
     docs.forEach((doc, idx) => {
       const index = idx + 1;
-      const frontmatterMatch = doc.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+      const frontmatterMatch = doc.match(
+        /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/,
+      );
       let meta: Record<string, string> = {};
       let body = doc;
 
@@ -334,8 +331,12 @@ export class AdminBulkImportService {
       let contentVi = body;
       let contentEn = body;
 
-      const viMatch = body.match(/#+\s*(?:vi|tiếng việt|vietnamese)\b\r?\n([\s\S]*?)(?=#+\s*(?:en|tiếng anh|english)|$)/i);
-      const enMatch = body.match(/#+\s*(?:en|tiếng anh|english)\b\r?\n([\s\S]*?)(?=#+\s*(?:vi|tiếng việt|vietnamese)|$)/i);
+      const viMatch = body.match(
+        /#+\s*(?:vi|tiếng việt|vietnamese)\b\r?\n([\s\S]*?)(?=#+\s*(?:en|tiếng anh|english)|$)/i,
+      );
+      const enMatch = body.match(
+        /#+\s*(?:en|tiếng anh|english)\b\r?\n([\s\S]*?)(?=#+\s*(?:vi|tiếng việt|vietnamese)|$)/i,
+      );
 
       if (viMatch) contentVi = viMatch[1].trim();
       if (enMatch) contentEn = enMatch[1].trim();
@@ -408,8 +409,12 @@ export class AdminBulkImportService {
         } else if (/^order:\s*(\d+)/i.test(trimmed)) {
           const m = trimmed.match(/^order:\s*(\d+)/i);
           if (m) order = Number(m[1]);
-        } else if (/^#*\s*(?:question|câu hỏi)(?:\s*vi)?:\s*(.*)/i.test(trimmed)) {
-          const m = trimmed.match(/^#*\s*(?:question|câu hỏi)(?:\s*vi)?:\s*(.*)/i);
+        } else if (
+          /^#*\s*(?:question|câu hỏi)(?:\s*vi)?:\s*(.*)/i.test(trimmed)
+        ) {
+          const m = trimmed.match(
+            /^#*\s*(?:question|câu hỏi)(?:\s*vi)?:\s*(.*)/i,
+          );
           if (m) questionTextVi = m[1].trim();
         } else if (/^#*\s*(?:question|câu hỏi)\s*en:\s*(.*)/i.test(trimmed)) {
           const m = trimmed.match(/^#*\s*(?:question|câu hỏi)\s*en:\s*(.*)/i);
@@ -472,7 +477,9 @@ export class AdminBulkImportService {
 
     docs.forEach((doc, idx) => {
       const index = idx + 1;
-      const frontmatterMatch = doc.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+      const frontmatterMatch = doc.match(
+        /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/,
+      );
       let meta: Record<string, string> = {};
       let body = doc;
 
@@ -489,10 +496,18 @@ export class AdminBulkImportService {
       }
 
       // Extract descriptions and hints
-      const descViMatch = body.match(/#+\s*(?:description|mô tả|yêu cầu)(?:\s*vi)?\b\r?\n([\s\S]*?)(?=#+|$)/i);
-      const descEnMatch = body.match(/#+\s*(?:description|mô tả)\s*en\b\r?\n([\s\S]*?)(?=#+|$)/i);
-      const hintViMatch = body.match(/#+\s*(?:hint|gợi ý)(?:\s*vi)?\b\r?\n([\s\S]*?)(?=#+|$)/i);
-      const hintEnMatch = body.match(/#+\s*(?:hint|gợi ý)\s*en\b\r?\n([\s\S]*?)(?=#+|$)/i);
+      const descViMatch = body.match(
+        /#+\s*(?:description|mô tả|yêu cầu)(?:\s*vi)?\b\r?\n([\s\S]*?)(?=#+|$)/i,
+      );
+      const descEnMatch = body.match(
+        /#+\s*(?:description|mô tả)\s*en\b\r?\n([\s\S]*?)(?=#+|$)/i,
+      );
+      const hintViMatch = body.match(
+        /#+\s*(?:hint|gợi ý)(?:\s*vi)?\b\r?\n([\s\S]*?)(?=#+|$)/i,
+      );
+      const hintEnMatch = body.match(
+        /#+\s*(?:hint|gợi ý)\s*en\b\r?\n([\s\S]*?)(?=#+|$)/i,
+      );
 
       items.push({
         datasetId: meta.datasetId ? Number(meta.datasetId) : undefined,
@@ -552,9 +567,10 @@ export class AdminBulkImportService {
 
     // Pre-fetch existing slugs in DB for batch
     const candidateSlugs = items.map((i) => i.slug).filter(Boolean);
-    const existingLessons = candidateSlugs.length > 0
-      ? await this.lessonRepo.find({ where: { slug: In(candidateSlugs) } })
-      : [];
+    const existingLessons =
+      candidateSlugs.length > 0
+        ? await this.lessonRepo.find({ where: { slug: In(candidateSlugs) } })
+        : [];
     const existingSlugSet = new Set(existingLessons.map((l) => l.slug));
 
     items.forEach((item, idx) => {
@@ -600,10 +616,9 @@ export class AdminBulkImportService {
           index,
           identifier: item.slug,
           field: 'courseId',
-          message:
-            item.courseSlug
-              ? `Course with slug "${item.courseSlug}" not found`
-              : 'Missing valid courseId or courseSlug',
+          message: item.courseSlug
+            ? `Course with slug "${item.courseSlug}" not found`
+            : 'Missing valid courseId or courseSlug',
         });
       } else if (!courseIdSet.has(resolvedCourseId)) {
         errors.push({
@@ -641,7 +656,8 @@ export class AdminBulkImportService {
 
     items.forEach((item, idx) => {
       const index = idx + 1;
-      const snippet = item.questionTextVi || item.questionTextEn || `Question #${index}`;
+      const snippet =
+        item.questionTextVi || item.questionTextEn || `Question #${index}`;
 
       // 1. Quiz ID check
       if (!item.quizId) {
@@ -679,7 +695,11 @@ export class AdminBulkImportService {
       }
 
       // 3. Options validation
-      if (!item.options || !Array.isArray(item.options) || item.options.length < 2) {
+      if (
+        !item.options ||
+        !Array.isArray(item.options) ||
+        item.options.length < 2
+      ) {
         errors.push({
           index,
           identifier: snippet,
@@ -713,7 +733,9 @@ export class AdminBulkImportService {
     return errors;
   }
 
-  private async validateLabs(items: RawParsedLab[]): Promise<BulkImportErrorItem[]> {
+  private async validateLabs(
+    items: RawParsedLab[],
+  ): Promise<BulkImportErrorItem[]> {
     const errors: BulkImportErrorItem[] = [];
 
     // Pre-fetch datasets
@@ -786,7 +808,10 @@ export class AdminBulkImportService {
         });
       } else {
         const normalized = item.expectedQuery.trim().toUpperCase();
-        if (!normalized.startsWith('SELECT') && !normalized.startsWith('WITH')) {
+        if (
+          !normalized.startsWith('SELECT') &&
+          !normalized.startsWith('WITH')
+        ) {
           errors.push({
             index,
             identifier: title,
@@ -945,8 +970,10 @@ export class AdminBulkImportService {
               order: 1,
               titleVi: 'Mệnh đề SELECT cơ bản',
               titleEn: 'Basic SELECT Statement',
-              contentVi: '# Mệnh đề SELECT trong SQL\n\nSELECT column1, column2 FROM table_name;',
-              contentEn: '# The SELECT statement in SQL\n\nSELECT column1, column2 FROM table_name;',
+              contentVi:
+                '# Mệnh đề SELECT trong SQL\n\nSELECT column1, column2 FROM table_name;',
+              contentEn:
+                '# The SELECT statement in SQL\n\nSELECT column1, column2 FROM table_name;',
             },
             {
               courseId: 1,
@@ -954,8 +981,10 @@ export class AdminBulkImportService {
               order: 2,
               titleVi: 'Mệnh đề WHERE lọc dữ liệu',
               titleEn: 'WHERE Clause for Filtering',
-              contentVi: '# Mệnh đề WHERE\n\nSELECT * FROM employees WHERE department = "IT";',
-              contentEn: '# The WHERE Clause\n\nSELECT * FROM employees WHERE department = "IT";',
+              contentVi:
+                '# Mệnh đề WHERE\n\nSELECT * FROM employees WHERE department = "IT";',
+              contentEn:
+                '# The WHERE Clause\n\nSELECT * FROM employees WHERE department = "IT";',
             },
           ],
           null,
@@ -1013,10 +1042,14 @@ SELECT * FROM employees WHERE department = 'IT';
             {
               quizId: 1,
               order: 1,
-              questionTextVi: 'Từ khóa nào trong SQL được dùng để lấy dữ liệu từ một bảng?',
-              explanationVi: 'SELECT là từ khóa tiêu chuẩn trong SQL để truy xuất dữ liệu từ một hoặc nhiều bảng.',
-              questionTextEn: 'Which SQL keyword is used to retrieve data from a database table?',
-              explanationEn: 'SELECT is the standard SQL keyword used to query data from tables.',
+              questionTextVi:
+                'Từ khóa nào trong SQL được dùng để lấy dữ liệu từ một bảng?',
+              explanationVi:
+                'SELECT là từ khóa tiêu chuẩn trong SQL để truy xuất dữ liệu từ một hoặc nhiều bảng.',
+              questionTextEn:
+                'Which SQL keyword is used to retrieve data from a database table?',
+              explanationEn:
+                'SELECT is the standard SQL keyword used to query data from tables.',
               options: [
                 {
                   optionTextVi: 'SELECT',
@@ -1065,14 +1098,19 @@ Explanation En: SELECT is the standard SQL keyword used to query data.
             {
               datasetId: 1,
               lessonId: 1,
-              expectedQuery: 'SELECT id, full_name, salary FROM employees WHERE salary >= 50000 ORDER BY salary DESC;',
+              expectedQuery:
+                'SELECT id, full_name, salary FROM employees WHERE salary >= 50000 ORDER BY salary DESC;',
               orderSensitive: true,
               titleVi: 'Bài tập 1: Lọc nhân viên có mức lương cao',
               titleEn: 'Lab 1: Filter High Salary Employees',
-              descriptionVi: 'Viết câu truy vấn lấy danh sách các cột id, full_name, salary từ bảng employees với mức lương từ 50,000 trở lên, sắp xếp giảm dần theo salary.',
-              descriptionEn: 'Write a query to retrieve id, full_name, salary from employees with salary >= 50000, ordered by salary descending.',
-              hintVi: 'Sử dụng WHERE salary >= 50000 kết hợp ORDER BY salary DESC.',
-              hintEn: 'Use WHERE salary >= 50000 combined with ORDER BY salary DESC.',
+              descriptionVi:
+                'Viết câu truy vấn lấy danh sách các cột id, full_name, salary từ bảng employees với mức lương từ 50,000 trở lên, sắp xếp giảm dần theo salary.',
+              descriptionEn:
+                'Write a query to retrieve id, full_name, salary from employees with salary >= 50000, ordered by salary descending.',
+              hintVi:
+                'Sử dụng WHERE salary >= 50000 kết hợp ORDER BY salary DESC.',
+              hintEn:
+                'Use WHERE salary >= 50000 combined with ORDER BY salary DESC.',
             },
           ],
           null,

@@ -23,17 +23,17 @@ describe('AdminBulkImportService', () => {
 
   const mockTransactionManager = {
     create: jest.fn((entityClass, data) => ({ ...data, id: 99 })),
-    save: jest.fn(async (entityClass, data) => data),
+    save: jest.fn((entityClass, data) => Promise.resolve(data)),
   };
 
   const mockDataSource = {
-    transaction: jest.fn(async (cb) => cb(mockTransactionManager)),
+    transaction: jest.fn((cb) => Promise.resolve(cb(mockTransactionManager))),
   };
 
   const mockLessonRepo = {
     find: jest.fn(),
     create: jest.fn((dto) => ({ ...dto, id: 1 })),
-    save: jest.fn(async (dto) => dto),
+    save: jest.fn((dto) => Promise.resolve(dto)),
   };
 
   const mockCourseRepo = {
@@ -58,23 +58,23 @@ describe('AdminBulkImportService', () => {
 
   const mockLessonTranslationRepo = {
     create: jest.fn((dto) => dto),
-    save: jest.fn(async (dto) => dto),
+    save: jest.fn((dto) => Promise.resolve(dto)),
   };
 
   const mockQuestionTranslationRepo = {
     create: jest.fn((dto) => dto),
-    save: jest.fn(async (dto) => dto),
+    save: jest.fn((dto) => Promise.resolve(dto)),
   };
 
   const mockLabRepo = {
     find: jest.fn(),
     create: jest.fn((dto) => ({ ...dto, id: 1 })),
-    save: jest.fn(async (dto) => dto),
+    save: jest.fn((dto) => Promise.resolve(dto)),
   };
 
   const mockLabTranslationRepo = {
     create: jest.fn((dto) => dto),
-    save: jest.fn(async (dto) => dto),
+    save: jest.fn((dto) => Promise.resolve(dto)),
   };
 
   beforeEach(async () => {
@@ -108,7 +108,10 @@ describe('AdminBulkImportService', () => {
           provide: getRepositoryToken(LabTranslationEntity),
           useValue: mockLabTranslationRepo,
         },
-        { provide: getRepositoryToken(DatasetEntity), useValue: mockDatasetRepo },
+        {
+          provide: getRepositoryToken(DatasetEntity),
+          useValue: mockDatasetRepo,
+        },
       ],
     }).compile();
 
@@ -117,7 +120,9 @@ describe('AdminBulkImportService', () => {
 
   describe('Lessons Bulk Import', () => {
     it('should validate and preview lessons in dryRun mode without database writes', async () => {
-      mockCourseRepo.find.mockResolvedValueOnce([{ id: 1, slug: 'sql-basics' }]);
+      mockCourseRepo.find.mockResolvedValueOnce([
+        { id: 1, slug: 'sql-basics' },
+      ]);
       mockLessonRepo.find.mockResolvedValueOnce([]); // no existing slugs
 
       const content = JSON.stringify([
@@ -148,7 +153,9 @@ describe('AdminBulkImportService', () => {
     });
 
     it('should persist lessons transactionally when dryRun is false', async () => {
-      mockCourseRepo.find.mockResolvedValueOnce([{ id: 1, slug: 'sql-basics' }]);
+      mockCourseRepo.find.mockResolvedValueOnce([
+        { id: 1, slug: 'sql-basics' },
+      ]);
       mockLessonRepo.find.mockResolvedValueOnce([]);
 
       const content = JSON.stringify([
@@ -178,7 +185,9 @@ describe('AdminBulkImportService', () => {
     });
 
     it('should reject duplicate slugs within the same import batch', async () => {
-      mockCourseRepo.find.mockResolvedValueOnce([{ id: 1, slug: 'sql-basics' }]);
+      mockCourseRepo.find.mockResolvedValueOnce([
+        { id: 1, slug: 'sql-basics' },
+      ]);
       mockLessonRepo.find.mockResolvedValueOnce([]);
 
       const content = JSON.stringify([
@@ -197,7 +206,9 @@ describe('AdminBulkImportService', () => {
     });
 
     it('should reject when referenced course does not exist', async () => {
-      mockCourseRepo.find.mockResolvedValueOnce([{ id: 1, slug: 'sql-basics' }]);
+      mockCourseRepo.find.mockResolvedValueOnce([
+        { id: 1, slug: 'sql-basics' },
+      ]);
       mockLessonRepo.find.mockResolvedValueOnce([]);
 
       const content = JSON.stringify([
@@ -215,7 +226,9 @@ describe('AdminBulkImportService', () => {
     });
 
     it('should parse lessons from Markdown format with frontmatter', async () => {
-      mockCourseRepo.find.mockResolvedValueOnce([{ id: 1, slug: 'sql-basics' }]);
+      mockCourseRepo.find.mockResolvedValueOnce([
+        { id: 1, slug: 'sql-basics' },
+      ]);
       mockLessonRepo.find.mockResolvedValueOnce([]);
 
       const mdContent = `---
