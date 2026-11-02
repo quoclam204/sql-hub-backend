@@ -26,6 +26,101 @@ export class QuizStatsDto {
   completedQuizzesCount: number;
 }
 
+export class StreakInfoDto {
+  @ApiProperty({
+    example: 3,
+    description: 'Current consecutive active days streak',
+  })
+  currentStreak: number;
+
+  @ApiProperty({
+    example: 7,
+    description: 'Longest consecutive active days streak ever achieved',
+  })
+  longestStreak: number;
+
+  @ApiProperty({
+    example: 12,
+    description: 'Total distinct active calendar days',
+  })
+  totalActiveDays: number;
+
+  @ApiProperty({
+    example: true,
+    description:
+      'Whether the learner has completed any learning activity today',
+  })
+  isActiveToday: boolean;
+
+  @ApiProperty({
+    example: ['2026-10-27', '2026-10-28', '2026-10-29'],
+    description:
+      'List of unique active calendar dates (YYYY-MM-DD) sorted ascending',
+  })
+  activeDates: string[];
+}
+
+export class BadgeDto {
+  @ApiProperty({
+    example: 'first-lesson',
+    description: 'Unique badge identifier',
+  })
+  id: string;
+
+  @ApiProperty({
+    example: 'Bước khởi đầu',
+    description: 'Badge title in Vietnamese',
+  })
+  titleVi: string;
+
+  @ApiProperty({ example: 'First Step', description: 'Badge title in English' })
+  titleEn: string;
+
+  @ApiProperty({
+    example: 'Hoàn thành bài học lý thuyết đầu tiên',
+    description: 'Badge description in Vietnamese',
+  })
+  descriptionVi: string;
+
+  @ApiProperty({
+    example: 'Complete your first lesson',
+    description: 'Badge description in English',
+  })
+  descriptionEn: string;
+
+  @ApiProperty({
+    example: 'milestone',
+    enum: ['milestone', 'streak', 'mastery'],
+    description: 'Badge category',
+  })
+  category: 'milestone' | 'streak' | 'mastery';
+
+  @ApiProperty({ example: 'book-open', description: 'Badge icon identifier' })
+  icon: string;
+
+  @ApiProperty({ example: true, description: 'Whether the badge is unlocked' })
+  isUnlocked: boolean;
+
+  @ApiProperty({
+    example: '2026-10-25T08:30:00.000Z',
+    nullable: true,
+    description: 'Timestamp when the badge was unlocked',
+  })
+  unlockedAt: string | null;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Current progress towards this badge',
+  })
+  currentProgress: number;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Target progress needed to unlock badge',
+  })
+  targetProgress: number;
+}
+
 export class LearnerProgressDto {
   @ApiProperty({
     example: 12,
@@ -56,4 +151,16 @@ export class LearnerProgressDto {
     description: 'Total number of available labs',
   })
   totalLabsCount: number;
+
+  @ApiProperty({
+    type: () => StreakInfoDto,
+    description: 'Streak statistics and active learning days (FR-PROG-02)',
+  })
+  streak: StreakInfoDto;
+
+  @ApiProperty({
+    type: () => [BadgeDto],
+    description: 'Gamification badges awarded to learner (FR-PROG-02)',
+  })
+  badges: BadgeDto[];
 }
