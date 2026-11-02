@@ -29,6 +29,14 @@ export class CourseEntity extends EntityRelationalHelper {
   @Column({ type: 'boolean', default: false })
   isPublished: boolean;
 
+  @OneToMany(
+    () => CourseTranslationEntity,
+    (translation) => translation.course,
+    {
+      cascade: true,
+    },
+  )
+  translations: CourseTranslationEntity[];
   @OneToMany(() => CourseTranslationEntity, (translation) => translation.course, {
     cascade: true,
   })

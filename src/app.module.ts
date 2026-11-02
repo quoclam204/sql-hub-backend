@@ -26,6 +26,8 @@ import { CoursesModule } from './courses/courses.module';
 import { LessonsModule } from './lessons/lessons.module';
 import { QuizzesModule } from './quizzes/quizzes.module';
 import { LabsModule } from './labs/labs.module';
+import { ProgressModule } from './progress/progress.module';
+import { AdminModule } from './admin/admin.module';
 
 const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
   useClass: TypeOrmConfigService,
@@ -86,6 +88,8 @@ const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
     LessonsModule,
     QuizzesModule,
     LabsModule,
+    ProgressModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

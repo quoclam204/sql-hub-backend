@@ -17,10 +17,7 @@ const infrastructureUploaderModule =
       : FilesS3PresignedModule;
 
 @Module({
-  imports: [
-    infrastructurePersistenceModule,
-    infrastructureUploaderModule,
-  ],
+  imports: [infrastructurePersistenceModule, infrastructureUploaderModule],
   providers: [FilesService],
   exports: [FilesService, infrastructurePersistenceModule],
 })

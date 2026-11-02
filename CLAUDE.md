@@ -69,7 +69,17 @@ npm run test:e2e
 
 ---
 
-## 5. Quy tắc và những điều KHÔNG ĐƯỢC LÀM
+## 5. Bộ công cụ AI first
+- Lệnh `/new-feature`: `.claude/commands/new-feature.md` dựng khung tính năng theo checklist 7 bước.
+- Lệnh `/ai-log`: `.claude/commands/ai-log.md` ghi bằng chứng dùng AI vào `docs/ai-log.md`.
+- Skill soạn nội dung song ngữ: `.claude/skills/lesson-content/SKILL.md`.
+- Skill review PR: `.claude/skills/pr-review/SKILL.md`.
+- Hook chặn secret: `scripts/check-secrets.js`, chạy tự động trong `.husky/pre-commit` và CI.
+- Nhật ký AI: `docs/ai-log.md` (mỗi PR có mục "AI đã giúp gì", tổng hợp mỗi tuần).
+
+---
+
+## 6. Quy tắc và những điều KHÔNG ĐƯỢC LÀM
 - **KHÔNG** đưa MongoDB / Mongoose quay trở lại dự án.
 - **KHÔNG** lưu token vào cookie; client bắt buộc gửi qua header `Authorization: Bearer <token>`.
 - **KHÔNG** commit API secret, OAuth client secret hoặc thông tin nhạy cảm vào git.
